@@ -381,27 +381,28 @@ psa_status_t psa_driver_wrapper_verify_hash(
 }
 
 /** Get the key buffer size required to store the key material of a key
- *  associated with an opaque driver without storage.
+ *  associated with an opaque driver.
  *
  * \param[in] attributes  The key attributes.
+ * \param[in] key_bits    The actual key bits used to deduce the size, given
+ *                        that this could vary from the core key_bits in the
+ *                        key attributes.
  * \param[out] key_buffer_size  Minimum buffer size to contain the key material
  *
  * \retval #PSA_SUCCESS
  *         The minimum size for a buffer to contain the key material has been
  *         returned successfully.
- * \retval #PSA_ERROR_INVALID_ARGUMENT
- *         The size in bits of the key is not valid.
  * \retval #PSA_ERROR_NOT_SUPPORTED
  *         The type and/or the size in bits of the key or the combination of
  *         the two is not supported.
  */
 psa_status_t psa_driver_wrapper_get_key_buffer_size(
     const psa_key_attributes_t *attributes,
+    const size_t key_bits,
     size_t *key_buffer_size )
 {
     psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION( attributes->core.lifetime );
     psa_key_type_t key_type = attributes->core.type;
-    size_t key_bits = attributes->core.bits;
 
     *key_buffer_size = 0;
     switch( location )
