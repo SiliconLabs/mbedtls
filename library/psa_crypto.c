@@ -600,8 +600,8 @@ psa_status_t psa_import_key_into_slot(
     uint8_t *key_buffer, size_t key_buffer_size,
     size_t *key_buffer_length, size_t *bits )
 {
-    psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
     psa_key_type_t type = attributes->core.type;
+    psa_status_t status = PSA_ERROR_NOT_SUPPORTED;
 
     /* zero-length keys are never supported. */
     if( data_length == 0 )
@@ -613,14 +613,14 @@ psa_status_t psa_import_key_into_slot(
 
         /* Ensure that the bytes-to-bits conversion hasn't overflown. */
         if( data_length > SIZE_MAX / 8 )
-            return( PSA_ERROR_NOT_SUPPORTED );
+            return( status );
 
         /* Enforce a size limit, and in particular ensure that the bit
          * size fits in its representation type. */
         if( ( *bits ) > PSA_MAX_KEY_BITS )
-            return( PSA_ERROR_NOT_SUPPORTED );
+            return( status );
 
-        status = validate_unstructured_key_bit_size( type, *bits );
+        status = validate_unstructured_key_bit_size( attributes->core.type, *bits );
         if( status != PSA_SUCCESS )
             return( status );
 
